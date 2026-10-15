@@ -31,5 +31,5 @@ onto the config).
 
 ## Status
 
-Planning/skeleton. The working implementation is in the thesis repository `vincent-219/masterarbeit-nahost`
+Step 1 done: config loader with validation (`R/config.R`) and interactive `setup.R`. Planning for the rest. The working implementation is in the thesis repository `vincent-219/masterarbeit-nahost`
 and is being generalised step by step (see `docs/MIGRATION.md`).
