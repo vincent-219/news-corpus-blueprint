@@ -1,0 +1,46 @@
+# news-corpus-blueprint: the ONE file you edit to adapt the pipeline to your topic.
+# Copy to projekt.yml (or run `Rscript setup.R`, which asks the questions and writes it).
+
+project:
+  name: "my-news-study"
+  contact: "Your Name, Your University <you@example.org>"   # sent in the scraper's User-Agent
+
+topic:
+  # Relevance filter, applied first to URLs/titles, then to the text. One entry per language;
+  # regular expressions, case-insensitive. Terms in other scripts are listed under their language.
+  keywords:
+    en: ["climate", "global warming", "cop\\d+"]
+    de: ["klima", "erderwärmung"]
+    fr: ["climat", "réchauffement"]
+  min_keyword_hits_in_lead: 1
+
+time:
+  overall: { start: 2023-01-01, end: 2025-12-31 }
+  # Analysis windows (event-driven). Leave empty to use the whole period.
+  windows:
+    - { id: W1, start: 2023-11-30, end: 2023-12-12, label: "COP28" }
+    - { id: W2, start: 2024-11-11, end: 2024-11-22, label: "COP29" }
+  control_weeks: 4          # randomly drawn constructed weeks outside the windows (0 = none), seed below
+  seed: 2023
+
+sources:
+  # Which outlets, in which country, what language. Everything else (sitemaps, Media Cloud IDs,
+  # paywall handling) is derived or discovered; override per outlet only when needed.
+  outlets:
+    - { name: "The Guardian", domain: "theguardian.com", country: GB, language: en }
+    - { name: "Le Monde",     domain: "lemonde.fr",      country: FR, language: fr, paywall: true }
+  media_cloud: { enabled: true, weekly_quota: 10000 }       # key in .Renviron: MEDIACLOUD_API_KEY
+  nexis_uni:   { enabled: false }                           # for paywalled outlets, needs institutional access
+
+translation:
+  engine: nllb              # nllb (local GPU) | none (analyse in original languages)
+  target_language: en
+  fields: [title, lead, half_page]
+
+limits:
+  workers: 4
+  memory_high_gb: 10
+  min_free_disk_gb: 2.5
+
+analysis:
+  enabled: [relevance, corpus, frames, sources]   # see docs/ARCHITECTURE.md

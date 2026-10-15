@@ -1,0 +1,5 @@
+data/
+logs/
+.Renviron
+projekt.yml
+*.sqlite
