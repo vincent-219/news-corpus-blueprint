@@ -29,7 +29,16 @@ translation engine, resource limits. `Rscript setup.R` asks for these interactiv
 See `docs/ARCHITECTURE.md` (design and the supervision rules) and `docs/MIGRATION.md` (how the thesis code maps
 onto the config).
 
+## Where to start
+
+1. Read this page, then `docs/ARCHITECTURE.md` (design and the supervision rules, one page).
+2. Look at `projekt.example.yml` to see what a project configuration contains.
+3. To see the pipeline running on a real topic, open the thesis repository
+   [`vincent-219/masterarbeit_presentable`](https://github.com/vincent-219/masterarbeit_presentable)
+   (README in English: `README_en.md`). The blueprint is the topic-free version of that code.
+
 ## Status
 
-Step 1 done: config loader with validation (`R/config.R`) and interactive `setup.R`. Planning for the rest. The working implementation is in the thesis repository `vincent-219/masterarbeit-nahost`
-and is being generalised step by step (see `docs/MIGRATION.md`).
+Early stage. Done so far: config loader with validation (`R/config.R`) and interactive `setup.R`.
+The other stages exist only in the thesis repository above and are being generalised step by step
+(see `docs/MIGRATION.md`). Nothing here is production-ready yet.
