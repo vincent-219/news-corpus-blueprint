@@ -36,6 +36,8 @@ config_pruefen <- function(c) {
     need(o$language %in% names(c$topic$keywords), paste0("outlet ", o$name %||% "?", ": no keywords for language '", o$language, "'"))
   }
   need(c$translation$engine %in% c("nllb", "none"), "translation.engine must be nllb or none")
+  need((c$translation$compute %||% "local") %in% c("local", "slurm"), "translation.compute must be local or slurm")
+  need((c$quality$reference %||% "auto") %in% c("hymt", "roundtrip", "auto"), "quality.reference must be hymt, roundtrip or auto")
   f
 }
 

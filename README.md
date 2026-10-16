@@ -21,9 +21,10 @@ translation engine, resource limits. `Rscript setup.R` asks for these interactiv
 | 1 Collect URLs | sitemaps, Media Cloud (weekly quota aware), archive pages | robots.txt, crawl delay, resumable |
 | 2 Download texts | polite, per outlet, paywall detection | memory ceiling, disk watcher |
 | 3 Import | SQLite, id = hash(outlet, date, title), de-duplication | idempotent |
-| 4 Translate | local NLLB on GPU, title / lead / first half page | auto-restart |
-| 5 Corpus | relevance-filtered, English/translated analysis corpus | |
-| 6 Optional: Nexis Uni export | for paywalled outlets, supervised browser runs | stops on any block |
+| 4 Translate | NLLB on GPU, title / lead / first half page; locally as a service or as bulk jobs on a Slurm cluster | auto-restart, resumable |
+| 5 Check quality | flags translations that probably went wrong (second model, or back-translation where no second model covers the language); a flag, never a filter | reference chosen per language |
+| 6 Corpus | relevance-filtered, English/translated analysis corpus | |
+| 7 Optional: Nexis Uni export | for paywalled outlets, supervised browser runs | stops on any block |
 | Live dashboard | progress per stage, coverage by country, pace | heartbeat + stall detection |
 
 See `docs/ARCHITECTURE.md` (design and the supervision rules) and `docs/MIGRATION.md` (how the thesis code maps
@@ -39,7 +40,7 @@ onto the config).
 
 ## Workflow
 
-Die Pipeline ist als Snakemake-Workflow beschrieben (ein Graph für dein Thema, je Medium und Sprache): [workflow/README.md](workflow/README.md).
+The batch part of the pipeline (bulk translation and the quality check on a cluster) is a **Snakemake workflow**: every step is a node with inputs and outputs, so the order, the parallel jobs (one per package) and what to re-run come from the graph instead of from loops in a script. The always-on parts (collecting, import, relevance) stay services and are deliberately not a graph. Details, rules and graphs: [workflow/README.md](workflow/README.md) (in German); the working reference implementation, with an interactive graph in its dashboard, is in the thesis repository.
 
 ## Status
 

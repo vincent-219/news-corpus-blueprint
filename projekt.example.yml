@@ -36,6 +36,12 @@ translation:
   engine: nllb              # nllb (local GPU) | none (analyse in original languages)
   target_language: en
   fields: [title, lead, half_page]
+  compute: local            # local (always-on service on your GPU) | slurm (bulk jobs on a cluster, see workflow/README.md)
+  # cluster: { host: uc3, partition: gpu_h100, gpus: 1 }   # only for compute: slurm
+
+quality:
+  enabled: true             # flag (never filter) translations that probably went wrong
+  reference: auto           # hymt (second model, where it covers the language) | roundtrip (translate back and compare) | auto (hymt, else roundtrip)
 
 limits:
   workers: 4
