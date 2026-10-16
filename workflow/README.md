@@ -48,3 +48,7 @@ snakemake -s workflow/Snakefile --rulegraph | python3 workflow/rulegraph_zu_merm
 
 Ergebnis jeder Stufe: eine Marker-Datei unter `results/marker/`; ein erneuter Aufruf macht dort weiter, wo er abgebrochen wurde.
 Geprüft: Trockenlauf mit dem Beispiel (2 Medien, 2 Sprachen → 11 Aufgaben), Ausführung der Stufe `config`, klare Fehlermeldung der Platzhalter.
+
+## Im Dashboard der Masterarbeit
+
+Das Referenzprojekt zeigt den Workflow-Graphen mit Erklärung im Dashboard (Abschnitt "Workflow (Snakemake)"). Der Blueprint übernimmt die Stufen schrittweise, siehe `docs/MIGRATION.md`; bis dahin sind die Stufen außer `config` Platzhalter.
