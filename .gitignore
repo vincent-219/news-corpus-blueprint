@@ -3,3 +3,5 @@ logs/
 .Renviron
 projekt.yml
 *.sqlite
+results/
+.snakemake/

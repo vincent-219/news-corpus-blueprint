@@ -1,0 +1,3 @@
+# Welche Stufen der Pipeline der Workflow ausführt (Reihenfolge egal; Abhängigkeiten ergeben sich aus den Regeln).
+# Stufen: config, urls, texte, import, uebersetzen, relevanz, korpus, qualitaet
+stufen: [config]

@@ -1,0 +1,120 @@
+# Snakemake-Workflow des Blueprints: die ganze Pipeline als Abhängigkeitsgraph, gesteuert von projekt.yml.
+# Pro Medium (sources.outlets) entstehen eigene Aufgaben für die URL-Sammlung und den Textabruf; die Übersetzung läuft je Sprache.
+#
+#   cp projekt.example.yml projekt.yml        # oder: Rscript setup.R
+#   snakemake -s workflow/Snakefile -n        # Trockenlauf: zeigt den Graphen für DEINE Medien und Sprachen
+#   snakemake -s workflow/Snakefile --cores 4 # ausführen (bisher nur die Stufe "config", siehe Stand unten)
+#
+# STAND: Das Gerüst und die Konfigurationsprüfung laufen. Die übrigen Stufen sind Platzhalter, die mit einer klaren Meldung abbrechen:
+# ihr Code liegt noch im Thesis-Repository (vincent-219/masterarbeit-nahost) und wird nach docs/MIGRATION.md schrittweise übernommen.
+# Welche Stufen laufen sollen, steuert `stufen` in workflow/config.yaml oder --config stufen='[config, urls]'.
+import re
+import yaml
+
+configfile: "workflow/config.yaml"
+
+PROJEKT = yaml.safe_load(open(config.get("projekt", "projekt.yml"), encoding="utf-8"))
+MEDIEN = [re.sub(r"[^A-Za-z0-9_-]", "_", o["name"]) for o in PROJEKT["sources"]["outlets"]]
+SPRACHEN = sorted({o["language"] for o in PROJEKT["sources"]["outlets"]})
+FENSTER = [w["id"] for w in PROJEKT["time"].get("windows", [])] or ["ALL"]
+STUFEN = config["stufen"]
+M = "results/marker"
+
+ZIELE = {
+    "config": [f"{M}/config.ok"],
+    "urls": expand(M + "/urls_{m}.ok", m=MEDIEN),
+    "texte": expand(M + "/texte_{m}.ok", m=MEDIEN),
+    "import": [f"{M}/import.ok"],
+    "uebersetzen": expand(M + "/uebersetzt_{s}.ok", s=SPRACHEN),
+    "relevanz": [f"{M}/relevanz.ok"],
+    "korpus": [f"{M}/korpus.ok"],
+    "qualitaet": [f"{M}/qualitaet.ok"],
+}
+
+NOCH_NICHT = "echo 'Stufe {rule} ist noch nicht in den Blueprint übernommen: siehe docs/MIGRATION.md' >&2; exit 1"
+
+
+rule alle:
+    input:
+        [z for s in STUFEN for z in ZIELE[s]],
+
+
+rule config:
+    """projekt.yml prüfen (Schlagwörter, Zeitraum, Fenster, Medien, Sprachen): bricht mit lesbarer Meldung ab."""
+    input:
+        yml=config.get("projekt", "projekt.yml"),
+        code="R/config.R",
+    output:
+        touch(f"{M}/config.ok"),
+    shell:
+        "Rscript -e 'source(\"R/config.R\"); invisible(config_laden(\"{input.yml}\"))'"
+
+
+rule urls:
+    """Artikel-URLs eines Mediums sammeln (Sitemaps, Media Cloud) und nach Schlagwörtern vorfiltern."""
+    input:
+        f"{M}/config.ok",
+    output:
+        touch(M + "/urls_{m}.ok"),
+    shell:
+        NOCH_NICHT
+
+
+rule texte:
+    """Volltexte eines Mediums höflich abrufen (robots.txt, Crawl-Delay, Kontakt im User-Agent)."""
+    input:
+        M + "/urls_{m}.ok",
+    output:
+        touch(M + "/texte_{m}.ok"),
+    shell:
+        NOCH_NICHT
+
+
+rule importieren:
+    """Alle Medien in die Datenbank importieren, Dubletten markieren, Grobfilter anwenden."""
+    input:
+        expand(M + "/texte_{m}.ok", m=MEDIEN),
+    output:
+        touch(f"{M}/import.ok"),
+    shell:
+        NOCH_NICHT
+
+
+rule uebersetzen:
+    """Artikel einer Sprache ins Englische übersetzen (NLLB; lokal oder als Slurm-Job auf einem Cluster)."""
+    input:
+        f"{M}/import.ok",
+    output:
+        touch(M + "/uebersetzt_{s}.ok"),
+    shell:
+        NOCH_NICHT
+
+
+rule relevanz:
+    """Relevanz je Artikel bestimmen (Schlagwörter im übersetzten Titel und Lead)."""
+    input:
+        expand(M + "/uebersetzt_{s}.ok", s=SPRACHEN),
+    output:
+        touch(f"{M}/relevanz.ok"),
+    shell:
+        NOCH_NICHT
+
+
+rule korpus:
+    """Analysekorpus exportieren (relevant, englisch oder übersetzt)."""
+    input:
+        f"{M}/relevanz.ok",
+    output:
+        touch(f"{M}/korpus.ok"),
+    shell:
+        NOCH_NICHT
+
+
+rule qualitaet:
+    """Qualitätsmarken für die Übersetzungen (zweites Modell als Vergleich, Bedeutungsähnlichkeit, Classifier)."""
+    input:
+        f"{M}/korpus.ok",
+    output:
+        touch(f"{M}/qualitaet.ok"),
+    shell:
+        NOCH_NICHT

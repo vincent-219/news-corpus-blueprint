@@ -19,3 +19,6 @@ Where the thesis hard-codes its topic, and what becomes configuration:
 3. Move thesis-specific analyses into `analyses/`.
 4. A toy example (small topic, 3 outlets) that runs end to end in minutes.
 5. Documentation for outsiders; licence; make the repo public after the thesis is submitted.
+
+## Workflow
+Jede übernommene Stufe ersetzt den Platzhalter in `workflow/Snakefile` durch den echten Aufruf (Reihenfolge der Schritte oben). Als Vorlage für die Cluster-Stufe dient `workflow/` im Thesis-Repository (Export, Hochladen, Slurm-Jobs je Paket, Import).

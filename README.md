@@ -37,6 +37,10 @@ onto the config).
    [`vincent-219/masterarbeit_presentable`](https://github.com/vincent-219/masterarbeit_presentable)
    (README in English: `README_en.md`). The blueprint is the topic-free version of that code.
 
+## Workflow
+
+Die Pipeline ist als Snakemake-Workflow beschrieben (ein Graph für dein Thema, je Medium und Sprache): [workflow/README.md](workflow/README.md).
+
 ## Status
 
 Early stage. Done so far: config loader with validation (`R/config.R`) and interactive `setup.R`.
